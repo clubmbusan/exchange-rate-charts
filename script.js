@@ -6,7 +6,7 @@ const candlestickChart = new Chart(ctx, {
     data: {
         datasets: [{
             label: 'USD/KRW',
-            data: [],
+            data: [], // 데이터를 비워둠
             borderColor: 'rgba(75, 192, 192, 1)',
         }]
     },
@@ -29,6 +29,7 @@ const candlestickChart = new Chart(ctx, {
 
 async function fetchCandleData() {
     try {
+        // API 호출
         const response = await fetch(`${apiUrl}?start_date=2023-12-01&end_date=2023-12-07&base=USD&symbols=KRW`);
         const data = await response.json();
 
