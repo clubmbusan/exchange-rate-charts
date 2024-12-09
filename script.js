@@ -16,7 +16,7 @@ const candlestickChart = new Chart(ctx, {
                 type: 'time',
                 adapters: {
                     date: {
-                        locale: window.dateFnsLocaleEnUS, // 로케일 설정
+                        locale: 'en-US',
                     }
                 }
             },
@@ -32,7 +32,7 @@ async function fetchCandleData() {
         const response = await fetch(apiUrl);
         const data = await response.json();
 
-        if (!data.rates) {
+        if (!data.rates || Object.keys(data.rates).length === 0) {
             console.error('API 응답에 데이터가 없습니다.');
             return;
         }
