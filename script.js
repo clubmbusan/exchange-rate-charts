@@ -1,4 +1,4 @@
-const apiUrl = 'https://api.exchangerate.host/timeseries'; // API URL
+const apiUrl = 'https://api.exchangerate.host/timeseries?start_date=2023-12-01&end_date=2023-12-07&base=USD&symbols=KRW';
 
 const ctx = document.getElementById('candlestickChart').getContext('2d');
 const candlestickChart = new Chart(ctx, {
@@ -29,8 +29,7 @@ const candlestickChart = new Chart(ctx, {
 
 async function fetchCandleData() {
     try {
-        // API 호출
-        const response = await fetch(`${apiUrl}?start_date=2023-12-01&end_date=2023-12-07&base=USD&symbols=KRW`);
+        const response = await fetch(apiUrl);
         const data = await response.json();
 
         if (!data.rates) {
