@@ -1,4 +1,5 @@
-const apiUrl = 'https://api.exchangerate.host/timeseries?start_date=2023-12-01&end_date=2023-12-07&base=USD&symbols=KRW';
+const today = new Date().toISOString().split('T')[0]; // 오늘 날짜
+const apiUrl = `https://api.exchangerate.host/timeseries?start_date=2023-12-01&end_date=${today}&base=USD&symbols=KRW`;
 
 const ctx = document.getElementById('candlestickChart').getContext('2d');
 const candlestickChart = new Chart(ctx, {
