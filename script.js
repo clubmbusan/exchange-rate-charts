@@ -1,5 +1,5 @@
-const currencyLayerUrl = 'https://api.currencylayer.com/live?access_key=74bdaf552fd2c840a89905c33ed806c4&currencies=KRW&source=USD&format=1';
 const exchangeRatesUrl = 'https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=KRW&apikey=Kjy3i7Zlfz8sskR43poGIqpEkQvXiCdq';
+const currencyLayerUrl = 'https://api.currencylayer.com/live?access_key=74bdaf552fd2c840a89905c33ed806c4&currencies=KRW&source=USD&format=1';
 
 const ctx = document.getElementById('candlestickChart').getContext('2d');
 const candlestickChart = new Chart(ctx, {
@@ -30,28 +30,28 @@ const candlestickChart = new Chart(ctx, {
 
 async function fetchCandleData() {
     try {
-        // Currency Layer API 호출
-        let response = await fetch(currencyLayerUrl);
+        // 첫 번째 API 호출 (Exchange Rates API)
+        let response = await fetch(exchangeRatesUrl);
         let data = await response.json();
 
-        if (!data.success || !data.quotes || !data.quotes.USDKRW) {
-            console.warn('Currency Layer API 실패, Exchange Rates API로 전환합니다.');
+        if (!data.success || !data.rates || !data.rates.KRW) {
+            console.warn('Exchange Rates API 실패, Currency Layer API로 전환합니다.');
 
-            // Exchange Rates API 호출
-            response = await fetch(exchangeRatesUrl);
+            // Currency Layer API 호출 (백업 API)
+            response = await fetch(currencyLayerUrl);
             data = await response.json();
 
-            if (!data.success || !data.rates || !data.rates.KRW) {
+            if (!data.success || !data.quotes || !data.quotes.USDKRW) {
                 console.error('두 API 모두 실패했습니다.');
                 return;
             }
 
-            const rate = data.rates.KRW;
+            const rate = data.quotes.USDKRW;
             updateChart(rate);
             return;
         }
 
-        const rate = data.quotes.USDKRW;
+        const rate = data.rates.KRW;
         updateChart(rate);
 
     } catch (error) {
@@ -68,5 +68,6 @@ function updateChart(rate) {
     candlestickChart.update();
 }
 
+// 데이터 가져오기 및 주기적 갱신
 fetchCandleData();
 setInterval(fetchCandleData, 60000);
