@@ -30,14 +30,14 @@ const candlestickChart = new Chart(ctx, {
 
 async function fetchCandleData() {
     try {
-        // 첫 번째 API 호출 (Currency Layer)
+        // Currency Layer API 호출
         let response = await fetch(currencyLayerUrl);
         let data = await response.json();
 
-        // Currency Layer 실패 시 두 번째 API 호출
         if (!data.success || !data.quotes || !data.quotes.USDKRW) {
             console.warn('Currency Layer API 실패, Exchange Rates API로 전환합니다.');
 
+            // Exchange Rates API 호출
             response = await fetch(exchangeRatesUrl);
             data = await response.json();
 
