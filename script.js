@@ -16,7 +16,7 @@ const candlestickChart = new Chart(ctx, {
                 type: 'time',
                 adapters: {
                     date: {
-                        locale: 'en-US',
+                        locale: window.dateFnsLocaleEnUS, // 로케일 설정
                     }
                 }
             },
