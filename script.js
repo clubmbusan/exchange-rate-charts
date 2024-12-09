@@ -1,4 +1,4 @@
-const currencyLayerUrl = 'http://api.currencylayer.com/live?access_key=74bdaf552fd2c840a89905c33ed806c4&currencies=KRW&source=USD&format=1';
+const currencyLayerUrl = 'https://api.currencylayer.com/live?access_key=74bdaf552fd2c840a89905c33ed806c4&currencies=KRW&source=USD&format=1';
 const exchangeRatesUrl = 'https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=KRW&apikey=Kjy3i7Zlfz8sskR43poGIqpEkQvXiCdq';
 
 const ctx = document.getElementById('candlestickChart').getContext('2d');
@@ -30,9 +30,11 @@ const candlestickChart = new Chart(ctx, {
 
 async function fetchCandleData() {
     try {
+        // 첫 번째 API 호출 (Currency Layer)
         let response = await fetch(currencyLayerUrl);
         let data = await response.json();
 
+        // Currency Layer 실패 시 두 번째 API 호출
         if (!data.success || !data.quotes || !data.quotes.USDKRW) {
             console.warn('Currency Layer API 실패, Exchange Rates API로 전환합니다.');
 
