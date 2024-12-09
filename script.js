@@ -1,3 +1,5 @@
+import { enUS } from 'date-fns/locale';
+
 const apiUrl = 'https://api.exchangerate.host/timeseries?start_date=2023-12-01&end_date=2023-12-07&base=USD&symbols=KRW';
 
 const ctx = document.getElementById('candlestickChart').getContext('2d');
@@ -16,7 +18,7 @@ const candlestickChart = new Chart(ctx, {
                 type: 'time',
                 adapters: {
                     date: {
-                        locale: 'en-US'
+                        locale: enUS, // 영어(미국) 로케일 추가
                     }
                 }
             },
