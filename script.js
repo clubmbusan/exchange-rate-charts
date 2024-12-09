@@ -31,31 +31,40 @@ const candlestickChart = new Chart(ctx, {
 async function fetchCandleData() {
     try {
         // 첫 번째 API 호출 (Exchange Rates API)
+        console.log('Exchange Rates API 호출 중...');
         let response = await fetch(exchangeRatesUrl);
+
+        if (response.status === 429) {
+            console.warn('Exchange Rates API 요청 제한 초과. Currency Layer API로 전환합니다.');
+            throw new Error('Too Many Requests');
+        }
+
         let data = await response.json();
-
         if (!data.success || !data.rates || !data.rates.KRW) {
-            console.warn('Exchange Rates API 실패, Currency Layer API로 전환합니다.');
-
-            // Currency Layer API 호출 (백업 API)
-            response = await fetch(currencyLayerUrl);
-            data = await response.json();
-
-            if (!data.success || !data.quotes || !data.quotes.USDKRW) {
-                console.error('두 API 모두 실패했습니다.');
-                return;
-            }
-
-            const rate = data.quotes.USDKRW;
-            updateChart(rate);
-            return;
+            throw new Error('Exchange Rates API 데이터 없음');
         }
 
         const rate = data.rates.KRW;
         updateChart(rate);
-
+        return;
     } catch (error) {
-        console.error('API 호출 중 오류 발생:', error);
+        console.warn('Exchange Rates API 실패:', error);
+
+        // Currency Layer API 호출
+        try {
+            console.log('Currency Layer API 호출 중...');
+            const response = await fetch(currencyLayerUrl);
+            let data = await response.json();
+
+            if (!data.success || !data.quotes || !data.quotes.USDKRW) {
+                throw new Error('Currency Layer API 데이터 없음');
+            }
+
+            const rate = data.quotes.USDKRW;
+            updateChart(rate);
+        } catch (innerError) {
+            console.error('두 API 모두 실패:', innerError);
+        }
     }
 }
 
@@ -68,6 +77,6 @@ function updateChart(rate) {
     candlestickChart.update();
 }
 
-// 데이터 가져오기 및 주기적 갱신
+// 요청 간격을 늘려 API 요청 제한 문제 완화
 fetchCandleData();
-setInterval(fetchCandleData, 60000);
+setInterval(fetchCandleData, 120000); // 2분 간격으로 요청
